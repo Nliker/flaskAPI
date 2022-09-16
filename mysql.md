@@ -6,7 +6,7 @@ cd /usr/local/mysql/bin
 비밀번호 입력
 
 ### 테이블 조회
-SHOW DATABASES;DESC slow_log;  
+SHOW DATABASES;
 (생성되어있는 DATABASE를 조회한다.)
 SELECT DATABASE(); 
 (현재 사용중인 DATABASE를 확인한다.) 
@@ -19,6 +19,15 @@ CREATE DATABASE miniter;
 ### 테이블 선택
 USE test; 
 
+### 컬럼 추가
+ALTER TABLE `테이블명` ADD `새컬럼명` 자료형 FIRST
+
+### 컬럼 삭제
+ALTER TABLE table name
+DROP COLUMN column name
+
+### unique 속성추가
+alter table users add email unique;
 ### READ 
 SELECT
     id,
