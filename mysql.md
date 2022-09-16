@@ -13,10 +13,10 @@ SELECT DATABASE();
 SHOW TABLES;  
 DESC slow_log;  
 
-## 테이블 생성
+## 데이터베이스 선택
 CREATE DATABASE miniter;
 
-### 테이블 선택
+### 데이터베이스 선택
 USE test; 
 
 ### 컬럼 추가
@@ -28,6 +28,9 @@ DROP COLUMN column name
 
 ### unique 속성추가
 alter table users add email unique;
+
+### foreign key 속성 추가
+alter table users_follow_list add constraint users_follow_list_follow_user_id_fkey foreign key(follow_user_id) references users(id);
 ### READ 
 SELECT
     id,
