@@ -12,8 +12,13 @@ SELECT DATABASE();
 (현재 사용중인 DATABASE를 확인한다.) 
 SHOW TABLES;  
 DESC slow_log;  
+
+## 테이블 생성
+CREATE DATABASE miniter;
+
 ### 테이블 선택
-USE test;  
+USE test; 
+
 ### READ 
 SELECT
     id,
@@ -42,7 +47,6 @@ INSERT INTO users (
 )
 
 ### UPDATE
-
 UPDATE users SET age=25 WHERE name="서정현"
 
 ### DELETE 
@@ -54,3 +58,4 @@ SELETE
     user_address.address
 FROM users
 JOIN user_address ON users.id=user_address.user_id
+
