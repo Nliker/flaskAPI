@@ -71,3 +71,9 @@ SELETE
 FROM users
 JOIN user_address ON users.id=user_address.user_id
 
+### NOT NULL + DEFAULT
+NOT NULL만 있는 경우: NULL을 직접 입력하든, 아무 것도 입력하지 않아서 NULL 값이 넘어가든 두 경우에 대해서 모두 오류를 생성한다.
+
+DEFAULT만 있는 경우: 사용자가 값을 입력하지 않는 경우에 알아서 해당 칼럼에 값을 부여한다. 만약 사용자가 NULL을 입력한다고 해도, 값을 입력한 것으로 보기 때문에, DEFAULT는 활성화되지 않는다.
+
+NOT NULL, DEFAULT 모두 있는 경우: 둘다 있는 경우에는 사용자가 값을 입력하지 않는 경우에는 알아서 DEFAULT가 활성화되고, NULL을 입력하는 경우 NOT NULL이 활성화되어 오류가 발생하게 됩니다.
