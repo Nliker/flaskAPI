@@ -13,14 +13,14 @@ SELECT DATABASE();
 SHOW TABLES;  
 DESC slow_log;  
 
-## 데이터베이스 선택
+## 데이터베이스 생성
 CREATE DATABASE miniter;
 
 ### 데이터베이스 선택
 USE test; 
 
 ### 컬럼 추가
-ALTER TABLE `테이블명` ADD `새컬럼명` 자료형 FIRST
+ALTER TABLE `테이블명` ADD `새컬럼명` 자료형 
 
 ### 컬럼 삭제
 ALTER TABLE table name
@@ -60,6 +60,11 @@ INSERT INTO users (
 
 ### UPDATE
 UPDATE users SET age=25 WHERE name="서정현"
+
+### 인덱스를 0부터 차례로 초기화 
+alter table users auto_increment=1;
+set @count=1;
+update users set id = @count:=@count+1;
 
 ### DELETE 
 DELETE FROM users WHERE age <20
