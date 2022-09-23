@@ -1,9 +1,14 @@
-from flask import Flask,jsonify,request,current_app
+from flask import Flask,jsonify,request,current_app,g
 from sqlalchemy import create_engine,text
 from sqlalchemy.exc import IntegrityError
 from collections import deque
+import bcrypt
+import jwt
+from functools import wraps
 
 def insert_user(user):
+    user['password']=bcrypt.hashpw(user['password'].encode('UTF-8'),bcrypt.gensalt())
+    
     return current_app.database.execute(text("""
             insert into users(
                 name,
@@ -17,7 +22,7 @@ def insert_user(user):
                 :password
             )
             """),user).lastrowid
-    
+
 def get_user(user_id):
     user=current_app.database.execute(text("""
             select 
@@ -92,6 +97,26 @@ def insert_unfollow(payload):
     """),{'user_id':payload['id'],'unfollow_user_id':payload['unfollow']})
     return result.rowcount
 
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args,**kargs):
+        access_token=request.headers.get('Authorization')
+        if access_token is not None:
+            print(access_token)
+            try:
+                payload=jwt.decode(access_token,current_app.config['JWT_SECRET_KEY'],'HS256')
+            except:
+                return jsonify({"message":"유효하지 않은 토큰이거나 토큰 검증과정에서 에러가 났습니다."}),404
+            user_id=payload['user_id']
+            g.user_id=user_id
+            
+            g.user=get_user(user_id) if user_id else None
+                
+        else:
+            return jsonify({"message":"토큰이 없습니다."}),401
+        return f(*args,**kargs)
+    return decorated_function
+
 def create_app(test_config=None):
     app=Flask(__name__)
 
@@ -99,7 +124,7 @@ def create_app(test_config=None):
         app.config.from_pyfile("config.py")
     else:
         app.config.update(test_config)
-        
+    
     database=create_engine(app.config['DB_URL'],encoding='utf-8',max_overflow=0)
     print("DB 연결 성공!")
     app.database=database
@@ -118,9 +143,11 @@ def create_app(test_config=None):
         return jsonify(new_user)
     
     @app.route("/tweet",methods=["POST"])
+    @login_required
     def tweet():    
         user_tweet=request.json
         tweet=user_tweet['tweet']
+        user_tweet['id']=g.user_id
         
         if len(tweet)>300:
             return "300자를 초과하였습니다.",400
@@ -151,8 +178,7 @@ def create_app(test_config=None):
            insert_follow(payload)
            return "저장성공",200
         except IntegrityError as e: 
-            print("에러")
-            return jsonify({"message":"pri중복"})
+            return jsonify({"message":"pri중복"}),402
     
     @app.route("/unfollow",methods=["POST"])
     def unfollow():
@@ -160,5 +186,28 @@ def create_app(test_config=None):
         insert_unfollow(payload)
         return "저장성공",200
         
+    @app.route("/login",methods=["GET","POST"])
+    def login():
+        credential=request.json
+
+        email=credential['email']
+        password=credential['password']
+        
+        row=app.database.execute(text("""
+            select id,hashed_password
+            from users
+            where email=:email                
+        """),{'email':email}).fetchone()
+        
+        if row and bcrypt.checkpw(password.encode('UTF-8'),row['hashed_password'].encode('UTF-8')):
+            user_id=row['id']
+            payload={
+                'user_id':user_id,
+                # 'exp':datetime.utcnow()+timedelta(seconds=60*60*24)
+            }
+            token=jwt.encode(payload,app.config['JWT_SECRET_KEY'],'HS256')
+            return jsonify({'access_token':token})
+        else:
+            return '',401
     return app
     
