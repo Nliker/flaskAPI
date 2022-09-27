@@ -29,6 +29,9 @@ DROP COLUMN column name
 ### unique 속성추가
 alter table users add email unique;
 
+### database의 테이블 복사
+CREATE TABLE DB1.테이블명 LIKE DB2.테이블명;
+
 ### foreign key 속성 추가
 alter table users_follow_list add constraint users_follow_list_follow_user_id_fkey foreign key(follow_user_id) references users(id);
 ### READ 
