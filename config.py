@@ -13,9 +13,10 @@ test_db={
     'user':'codakcodak',
     'password':'dkdrmaghEl83!',
     'host':'localhost',
-    'port':3307,
+    'port':3306,
     'database':'test_miniter'
 }
 test_config={
-    'DB_URL':f"mysql+mysqlconnector://{test_db['user']}:{test_db['password']}@{test_db['host']}:{test_db['port']}/{test_db['database']}?charset=utf8"
+    'DB_URL':f"mysql+mysqlconnector://{test_db['user']}:{test_db['password']}@{test_db['host']}:{test_db['port']}/{test_db['database']}?charset=utf8",
+    'JWT_SECRET_KEY':"codak"
 }

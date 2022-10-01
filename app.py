@@ -46,7 +46,7 @@ def get_user(user_id):
     return user
     
 def insert_tweet(user_tweet):
-    current_app.database.execute(text("""
+    return current_app.database.execute(text("""
             insert into tweets(
                 tweet,
                 user_id
@@ -132,7 +132,7 @@ def login_required(f):
                 else:
                     return ({"message":"해당 유저를 찾을 수 없습니다."}),404
             else:
-                return jsonify({"message":"필수정보가 없는 토큰입니다."}),404
+                return jsonify({"message":"필수정보가 없는 토큰입니다."}),401
                 
         else:
             return jsonify({"message":"토큰이 없습니다."}),401
@@ -150,17 +150,22 @@ def create_app(test_config=None):
         app.config.update(test_config)
     
     database=create_engine(app.config['DB_URL'],encoding='utf-8',max_overflow=0)
-    print("DB 연결 성공!")
+    print("app과 DB 연결 성공!")
     app.database=database
     
     # @app.errorhandler(404)
     # def error_handling_404(error):
     #     return jsonify({'result':'duplicated'}),400   
 
+    @app.route("/ping",methods=["GET"])
+    def ping():
+        return jsonify({'data':"pong"})
+    
     @app.route("/sign-up",methods=["POST"])
     def sign_up():
         new_user=request.json
         new_user['password']=bcrypt.hashpw(new_user['password'].encode('UTF-8'),bcrypt.gensalt())
+        print(new_user['password'])
         new_user_id=insert_user(new_user)  
         print("id:",new_user_id)
         new_user=get_user(new_user_id)
@@ -177,7 +182,9 @@ def create_app(test_config=None):
         if len(tweet)>300:
             return "300자를 초과하였습니다.",400
         
-        insert_tweet(user_tweet)
+        result=insert_tweet(user_tweet)
+        print(result)
+        
         return '트윗성공',200
     
     @app.route("/timeline/<int:user_id>",methods=["GET"])
