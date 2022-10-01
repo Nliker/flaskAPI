@@ -12,6 +12,7 @@ SELECT DATABASE();
 (현재 사용중인 DATABASE를 확인한다.) 
 SHOW TABLES;  
 DESC slow_log;  
+EXPLAIN USERS;
 
 ## 데이터베이스 생성
 CREATE DATABASE miniter;
