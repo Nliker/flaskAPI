@@ -1,7 +1,7 @@
 db={
-    "user":"root",
+    "user":"codakcodak",
     "password":"dkdrmaghEl83!",
-    "host":"localhost",
+    "host":"miniter.cnvmcb0pomhk.ap-northeast-2.rds.amazonaws.com",
     "port":3306,
     "database":"miniter"
 }
