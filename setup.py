@@ -1,7 +1,5 @@
 import sys
 
-import sys
-
 from flask_script import Manager
 from app import create_app
 from flask_twisted import Twisted
