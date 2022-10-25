@@ -172,6 +172,10 @@ def create_app(test_config=None):
         
         return jsonify(new_user)
     
+    @app.route("/",methods=["GET"])
+    def default():
+        return "Welcome To codacodak's miniter"
+    
     @app.route("/tweet",methods=["POST"])
     @login_required
     def tweet():    
